@@ -1,0 +1,19 @@
+# ELO API Spec Driven
+
+## Creación de la estructura del proyecto
+
+Creación del repositorio y configuración del proyecto con specify-cli:
+
+----
+uv tool install specify-cli --from git+https://github.com/github/spec-kit.git@v0.8.6
+
+specify init elo-api
+----
+
+Definición de la especificación de la API con OpenAPI:
+
+----
+/speckit.constitution Proyecto ELO Api. Este proyecto definirá una API Rest para gestionar ligas basadas en ELO entre jugadores. El proyecto estará basado en versiones de python 3.11+. Se utilizará FastAPI, MongoDB y Kafka. La API estará documentada con OpenAPI. Se usará el gestor uv siendo pyproject.toml la fuente de dependencias. La aplicación tendrá una arquitectura clean code con los paquetes principales domain, application, infrastructure e interfaces. Todo el codigo debe de ser mantenible, legible y conforme a estándares de calidad. La API usara notacion camelCase. La generación de código y documentación se hará en inglés aunque las especificaciones puedan estar en español. 
+----
+
+
