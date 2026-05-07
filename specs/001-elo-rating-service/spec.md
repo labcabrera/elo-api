@@ -74,6 +74,7 @@ Como sistema quiero registrar el resultado de una partida entre dos jugadores pa
 - **FR-004**: Al registrar una partida, el sistema MUST calcular los nuevos ratings ELO para los jugadores afectados siguiendo la especificación de Wikipedia como referencia y persistir los cambios.
 - **FR-005**: Al registrar una partida, el sistema MUST persistir un registro de la partida con `timestamp`, `players`, `result`, `elo_before` y `elo_after` para cada jugador.
 - **FR-006**: El sistema MUST publicar un evento en Kafka (`match.result`) con la información relevante tras procesar la partida, y aceptar consumir eventos de Kafka si la aplicación debe recibir resultados externos.
+ - **FR-006**: El sistema MUST publicar un evento en Kafka con la información relevante tras procesar la partida, y aceptar consumir eventos de Kafka si la aplicación debe recibir resultados externos. Los topics deben separarse por tipo de evento y versionarse (p.ej. `match.result.v1`, `player.updated.v1`). Los mensajes deberán tener un esquema versionado (Avro/JSON Schema/Protobuf) y seguir un contrato explícito para productores y consumidores.
 - **FR-007**: Todas las consultas lista/busqueda MUST soportar RSQL vía parámetro `q` y paginación con `page` y `size`.
 - **FR-008**: La API MUST documentarse con OpenAPI (code-first) y proveer esquema de request/response y errores.
 - **FR-009**: Configuración MUST leerse desde variables de entorno cargadas por un fichero `.env` (ej. mediante `python-dotenv` o equivalente en runtime).
@@ -107,4 +108,16 @@ Como sistema quiero registrar el resultado de una partida entre dos jugadores pa
 Se asumirá `players` deben estar asociados a una `league` (campo `league_id` obligatorio en `player`).
 `k_factor` por defecto será `32` si no se proporciona al crear la liga.
 - Persistencia primaria será MongoDB y las colecciones deberán modelarse para lectura eficiente de historial de partidas.
+
+## Clarifications
+
+### Session 2026-05-07
+
+- Q: ¿Qué esquema de autenticación/autorización debe usar la API? → A: `A` - Sin autenticación por ahora; la seguridad se definirá en una especificación posterior una vez la API esté probada.
+
+**Integration note:** Autenticación/Autorización queda pospuesta: la API se desplegará inicialmente sin mecanismos de autenticación (entorno de confianza o red interna). La seguridad será especificada e implementada en una fase posterior.
+
+- Q: ¿Cómo gestionar eventos Kafka (nombres de topics y versionado)? → B: Usar topics separados por tipo y esquemas versionados (p.ej. `match.result.v1`, `player.updated.v1`).
+
+**Integration note:** La aplicación debe exponer y documentar los nombres de topics usados por defecto y permitir su configuración vía variables de entorno. Recomendar usar un registry para esquemas (Avro/JSON Schema) y versionarlos para permitir evolución sin romper consumidores.
 - Kafka será accesible en entorno de despliegue; en pruebas unitarias las interacciones con Kafka serán mockeadas.
