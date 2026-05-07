@@ -68,7 +68,7 @@ Como sistema quiero registrar el resultado de una partida entre dos jugadores pa
 
 ### Functional Requirements
 
-- **FR-001**: API MUST exponer CRUD REST para `players` con `id` UUID autogenerado, `id_external`, `name`, `elo` (float), y campos adicionales opcionales.
+ - **FR-001**: API MUST exponer CRUD REST para `players` con `id` UUID autogenerado, `id_external`, `name`, `league_id` (UUID, obligatorio), `elo` (float), y campos adicionales opcionales. El `elo` inicial por defecto será `1500` si no se provee.
 - **FR-002**: API MUST exponer CRUD REST para `leagues` con `id` UUID autogenerado, `name` y `k_factor` configurable en creación y actualización.
 - **FR-003**: API MUST exponer un endpoint para registrar resultados de partidas: recibe `idFirst`, `idSecond`, `idWinner` (UUID | null), `league_id` (UUID) y `external_match_id` (opcional). Las partidas se registran y calculan siempre en el contexto de una liga.
 - **FR-004**: Al registrar una partida, el sistema MUST calcular los nuevos ratings ELO para los jugadores afectados siguiendo la especificación de Wikipedia como referencia y persistir los cambios.
@@ -85,6 +85,12 @@ Como sistema quiero registrar el resultado de una partida entre dos jugadores pa
 
 - **FR-014**: Players MUST pertenecer a una `league` (cada `player` tiene una referencia obligatoria a `league_id`). Todas las partidas se calculan en el contexto de la liga asociada.
 - **FR-015**: Si `k_factor` no es provisto al crear una liga, usar un valor por defecto de `32`.
+
+### Idempotency & Concurrency (design decisions)
+
+- **Idempotency (external_match_id)**: Cuando se reciba un `external_match_id` en el endpoint de registro de partidas, la API debe garantizar idempotencia: si ya existe un `Match` con el mismo `external_match_id`, la petición no re-procesará la lógica de ELO ni publicará eventos nuevamente; devolverá el recurso existente con `200 OK` (o `201 Created` cuando sea la primera creación). El store de dedupe es el propio índice único sobre `external_match_id` en la colección `matches`. El TTL/retención del registro de dedupe es configurable vía `DEDUP_TTL` si se desea purgar a futuro.
+
+- **Concurrency / Consistency**: Para evitar conditions de carrera al actualizar `Player.elo` simultáneamente, se usará control optimista con campo `version` en el documento `Player`. Las actualizaciones de rating se harán mediante operaciones atómicas condicionadas en MongoDB (compare-and-swap sobre `version`) o mediante transacciones multi-documento cuando estén disponibles en el despliegue. En caso de fallo por conflicto de versión, la operación deberá reintentar (con backoff) un número limitado de veces antes de fallar con error 409.
 
 ### Key Entities *(include if feature involves data)*
 

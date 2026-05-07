@@ -37,3 +37,7 @@ git flow feature start 001-elo-rating-service
 ----
 /speckit.analyze Analizar inconsistencias y aclaraciones pendientes
 ----
+
+----
+/speckit.analyze Analizar inconsistencias y aclaraciones pendientes
+----
