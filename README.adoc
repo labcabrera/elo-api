@@ -10,10 +10,16 @@ uv tool install specify-cli --from git+https://github.com/github/spec-kit.git@v0
 specify init elo-api
 ----
 
-Definición de la especificación de la API con OpenAPI:
+Definición de la constitución:
 
 ----
 /speckit.constitution Proyecto ELO Api. Este proyecto definirá una API Rest para gestionar ligas basadas en ELO entre jugadores. El proyecto estará basado en versiones de python 3.11+. Se utilizará FastAPI, MongoDB y Kafka. La API estará documentada con OpenAPI. Se usará el gestor uv siendo pyproject.toml la fuente de dependencias. La aplicación tendrá una arquitectura clean code con los paquetes principales domain, application, infrastructure e interfaces. Todo el codigo debe de ser mantenible, legible y conforme a estándares de calidad. La API usara notacion camelCase. La generación de código y documentación se hará en inglés aunque las especificaciones puedan estar en español. 
+----
+
+Definición de la especificación principal:
+
+----
+/speckit.specify Se creará un servicio para implementar el algorimo de ELO (para consultar aclaraciones se tomará como referencia la documentación de https://en.wikipedia.org/wiki/Elo_rating_system). La API estará implementada con FastAPI usando pyhton 3.11+. La persistencia se realizará con MongoDB. La aplicación también consumirá y publicará eventos en Kafka. La API definirá por un lado un CRUD de jugadores. Los jugadores (player) tendrán un id autogenerado en formato UUID, un id_external, name, elo y otra información necesaria. También tendrá un CRUD de ligas de jugadores (league) que tendrán una parametrización preconfigurada de k_factor que podrá ser modificado durante la creación. La API también expondrá un método en el que se registrará el resultado de una partida entre dos jugadores. Este método recibirá los identificadores de los jugadores (idFirst, idSecond) y un idWiner que indicará el ganador o será nulo cuando el resultado sea un empate. La API estará documentada con OpenApi (code-first). Las variables de configuración se establecerán como variables de sistema a partir de un fichero .env. Se crearan test unitarios de los componentes para ser testeados mockeando la capa de infraestructura. Se usarán los patrones de port-adapters de arquitectura hexagonal. La API definirá un objeto de error generico para los errores 4xx. Los métodos de consulta de la API estarán implementados usando búsquedas RSQL usando el parametro q para la expresion RSQL, page y size para la paginación. La API debe exponer un endpoint /health de salud. El endpoint de salud no debe realizar comprobaciones profundas que afecten al rendimiento.
 ----
 
 
