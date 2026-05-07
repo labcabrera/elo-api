@@ -127,3 +127,7 @@ Se asumirá `players` deben estar asociados a una `league` (campo `league_id` ob
 
 **Integration note:** La aplicación debe exponer y documentar los nombres de topics usados por defecto y permitir su configuración vía variables de entorno. Recomendar usar un registry para esquemas (Avro/JSON Schema) y versionarlos para permitir evolución sin romper consumidores.
 - Kafka será accesible en entorno de despliegue; en pruebas unitarias las interacciones con Kafka serán mockeadas.
+
+- Q: ¿Qué formato de esquema usar para eventos? → A: `A` - JSON Schema con registry (confirmado).
+
+**Integration note:** Event schemas are maintained under `specs/001-elo-rating-service/contracts/` (JSON Schema v1 files). The default topic names are configurable via env vars (see `TOPIC_MATCH_RESULT`, `TOPIC_PLAYER_UPDATED`).

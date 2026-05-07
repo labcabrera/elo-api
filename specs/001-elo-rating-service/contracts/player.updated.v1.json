@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PlayerUpdatedV1",
+  "type": "object",
+  "properties": {
+    "playerId": {"type":"string","format":"uuid"},
+    "leagueId": {"type":"string","format":"uuid"},
+    "eloBefore": {"type":"number"},
+    "eloAfter": {"type":"number"},
+    "timestamp": {"type":"string","format":"date-time"}
+  },
+  "required":["playerId","leagueId","eloBefore","eloAfter","timestamp"]
+}
