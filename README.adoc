@@ -41,3 +41,9 @@ git flow feature start 001-elo-rating-service
 ----
 /speckit.clarify revisar ambiguedades pendientes
 ----
+
+
+
+----
+/speckit.implement comenzar la implementacion iterativamente
+----

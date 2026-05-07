@@ -63,6 +63,7 @@ Como sistema quiero registrar el resultado de una partida entre dos jugadores pa
 - Registro de partida cuando uno o ambos jugadores no existen → devolver error 4xx (objeto de error genérico).
 - Registro duplicado de la misma partida (idempotencia) → detectar por `external_match_id` si se proporciona.
 - Cambios de `k_factor` en una liga con partidas previas → aplicar el nuevo `k_factor` solo a partir de su creación (no recomputar histórico por defecto) [ASSUMPTION].
+ - Registro de partida cuando los jugadores pertenecen a ligas distintas o no coinciden con `league_id` → devolver `400 Bad Request`.
 
 ## Requirements *(mandatory)*
 
@@ -70,7 +71,7 @@ Como sistema quiero registrar el resultado de una partida entre dos jugadores pa
 
  - **FR-001**: API MUST exponer CRUD REST para `players` con `id` UUID autogenerado, `id_external`, `name`, `league_id` (UUID, obligatorio), `elo` (float), y campos adicionales opcionales. El `elo` inicial por defecto será `1500` si no se provee.
 - **FR-002**: API MUST exponer CRUD REST para `leagues` con `id` UUID autogenerado, `name` y `k_factor` configurable en creación y actualización.
-- **FR-003**: API MUST exponer un endpoint para registrar resultados de partidas: recibe `idFirst`, `idSecond`, `idWinner` (UUID | null), `league_id` (UUID) y `external_match_id` (opcional). Las partidas se registran y calculan siempre en el contexto de una liga.
+ - **FR-003**: API MUST exponer un endpoint para registrar resultados de partidas: recibe `idFirst`, `idSecond`, `idWinner` (UUID | null), `league_id` (UUID) y `external_match_id` (opcional). Las partidas se registran y calculan siempre en el contexto de una liga. Ambos jugadores deben pertenecer a la `league` indicada por `league_id`; si alguno de los jugadores no pertenece a dicha liga, la API deberá rechazar la petición con `400 Bad Request`.
 - **FR-004**: Al registrar una partida, el sistema MUST calcular los nuevos ratings ELO para los jugadores afectados siguiendo la especificación de Wikipedia como referencia y persistir los cambios.
 - **FR-005**: Al registrar una partida, el sistema MUST persistir un registro de la partida con `timestamp`, `players`, `result`, `elo_before` y `elo_after` para cada jugador.
 - **FR-006**: El sistema MUST publicar un evento en Kafka (`match.result`) con la información relevante tras procesar la partida, y aceptar consumir eventos de Kafka si la aplicación debe recibir resultados externos.
@@ -131,3 +132,6 @@ Se asumirá `players` deben estar asociados a una `league` (campo `league_id` ob
 - Q: ¿Qué formato de esquema usar para eventos? → A: `A` - JSON Schema con registry (confirmado).
 
 **Integration note:** Event schemas are maintained under `specs/001-elo-rating-service/contracts/` (JSON Schema v1 files). The default topic names are configurable via env vars (see `TOPIC_MATCH_RESULT`, `TOPIC_PLAYER_UPDATED`).
+
+- Q: ¿Cómo manejar partidas entre jugadores de ligas distintas? → A: `A` - Requerir que ambos jugadores pertenezcan a la `league` indicada; en caso contrario devolver `400 Bad Request`.
+
