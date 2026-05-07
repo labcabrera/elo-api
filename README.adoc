@@ -27,7 +27,13 @@ Definición de la especificación principal:
 ----
 
 ----
-/speckit.analyze Analizar inconsistencias y aclaraciones pendientes
+git flow feature start 001-elo-rating-service
 ----
 
+----
+/speckit.plan Crear listado de pasos para realizar la implementación inicial de la API
+----
 
+----
+/speckit.analyze Analizar inconsistencias y aclaraciones pendientes
+----
