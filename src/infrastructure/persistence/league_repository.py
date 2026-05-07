@@ -3,6 +3,7 @@ from uuid import uuid4
 from datetime import datetime
 from src.infrastructure.persistence.mongo import get_db
 from src.application.ports.repository import LeagueRepository
+from src.application.settings import settings
 
 db = get_db()
 
@@ -17,7 +18,7 @@ class MongoLeagueRepository(LeagueRepository):
         doc = {
             "_id": lid,
             "name": data.get("name"),
-            "k_factor": float(data.get("k_factor", 32)),
+            "k_factor": float(data.get("k_factor", settings.DEFAULT_K_FACTOR)),
             "metadata": data.get("metadata", {}),
             "created_at": now,
             "updated_at": now,

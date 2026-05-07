@@ -7,7 +7,7 @@ name = "elo-api"
 version = "0.1.0"
 description = "ELO rating service API"
 authors = [ { name = "Repo Owner" } ]
-readme = "README.adoc"
+readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
   "fastapi>=0.95.0",

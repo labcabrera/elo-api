@@ -47,3 +47,10 @@ git flow feature start 001-elo-rating-service
 ----
 /speckit.implement comenzar la implementacion iterativamente
 ----
+
+
+----
+uv lock
+uv sync
+source .venv/bin/activate
+----

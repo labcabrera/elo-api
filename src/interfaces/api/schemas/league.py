@@ -1,5 +1,5 @@
 from __future__ import annotations
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from uuid import UUID
 from typing import Optional
 
@@ -19,6 +19,9 @@ class LeagueUpdate(BaseModel):
 
 
 class LeagueRead(LeagueBase):
-    id: UUID
+    id: UUID = Field(..., alias="_id")
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
+
+    class Config:
+        allow_population_by_field_name = True
